@@ -13,8 +13,28 @@ from compensator import compensateData, create_compensationLibrary
 from writer import pickler
 from analyser import experimentAnalyser
 from Printicek import daviPrint
+from progress_bar import statusWindow
+
+
 
 def main():
+    def fileLoop(index=0):
+        dataFilePath = dataFilePaths[index]
+        #Extract data according to isolation list from data file:
+        indexedData = mzMLdataExtractor(dataFilePath, settings, peptideSettings)
+        #Create TIC file in save directory/output:
+        TICwriter(indexedData['TIC'], dataFilePath, saveDirectory)
+        #Compensate MS1 & MS2 peaks:
+        if settings['Co-isolation'] and settings['MS2 compensation'] or settings['MS1 compensation']:
+            indexedData = compensateData(compensationLibrary, indexedData, settings)
+        #Save data:
+        saveFilePath = pickler(indexedData, peptideSettings, settings, saveDirectory, dataFilePath)
+        experimentFiles.append(saveFilePath)
+        statWin.updating(index+1, dataFilePath[index])
+        if index+1<len(dataFilePaths):
+            index += 1
+            statWin.after(1, fileLoop, index)
+    
     experimentFiles = []
     #load Settings:
     settings, isolationListPath, dataFilePaths, saveDirectory, experimentFiles, experimentName = settingsGUI()
@@ -31,17 +51,12 @@ def main():
             compensationLibrary = create_compensationLibrary(peptideSettings, settings)
         #Parse data files:
         daviPrint('Data indexing and peak calling:', line=True)
-        for dataFilePath in dataFilePaths:
-            #Extract data according to isolation list from data file:
-            indexedData = mzMLdataExtractor(dataFilePath, settings, peptideSettings)
-            #Create TIC file in save directory/output:
-            TICwriter(indexedData['TIC'], dataFilePath, saveDirectory)
-            #Compensate MS1 & MS2 peaks:
-            if settings['Co-isolation'] and settings['MS2 compensation'] or settings['MS1 compensation']:
-                indexedData = compensateData(compensationLibrary, indexedData, settings)
-            #Save data:
-            saveFilePath = pickler(indexedData, peptideSettings, settings, saveDirectory, dataFilePath)
-            experimentFiles.append(saveFilePath)
+        
+        #Create status window:
+        statWin = statusWindow(len(dataFilePaths))
+        statWin.after(1, fileLoop, 0)
+        statWin.mainloop()
+            
         
     #Create result files:
     experimentAnalyser(experimentFiles, saveDirectory, experimentName, settings)
