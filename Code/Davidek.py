@@ -13,13 +13,28 @@ from compensator import compensateData, create_compensationLibrary
 from writer import pickler
 from analyser import experimentAnalyser
 from Printicek import daviPrint
-from progress_bar import statusWindow
-
+from progress_bar import bar
+import time
+from statistics import median
 
 
 def main():
-    def fileLoop(index=0):
+    #--------------------------------------------------------------------------
+    def fileLoop(index, fileTime):
+        """
+        """
+        showTime = ''
+        if not fileTime == 0:
+            times.append(time.time()-fileTime)
+            secTime = median(times)*(len(dataFilePaths)-index)
+            showTime = ' '.join([t for t in time.strftime('%Hh %Mm %Ss', time.gmtime(secTime)).split(' ') if '00' not in t])
+    
+        fileTime = time.time()
         dataFilePath = dataFilePaths[index]
+        window.currentText('Current file: ' + dataFilePath.split('/')[-1] + '\n(' + str(index+1) + '/' + str(len(dataFilePaths)) + ')\n' + showTime)
+        
+        #File Analysis
+        #----------------------------------------------------------------------
         #Extract data according to isolation list from data file:
         indexedData = mzMLdataExtractor(dataFilePath, settings, peptideSettings)
         #Create TIC file in save directory/output:
@@ -30,11 +45,14 @@ def main():
         #Save data:
         saveFilePath = pickler(indexedData, peptideSettings, settings, saveDirectory, dataFilePath)
         experimentFiles.append(saveFilePath)
-        statWin.updating(index+1, dataFilePath[index])
-        if index+1<len(dataFilePaths):
-            index += 1
-            statWin.after(1, fileLoop, index)
-    
+        #----------------------------------------------------------------------
+        window.add()
+        window.update_idletasks()
+        index+=1
+        if not index == len(dataFilePaths):
+            window.after(1, fileLoop, index, fileTime)
+    #--------------------------------------------------------------------------
+            
     experimentFiles = []
     #load Settings:
     settings, isolationListPath, dataFilePaths, saveDirectory, experimentFiles, experimentName = settingsGUI()
@@ -52,11 +70,17 @@ def main():
         #Parse data files:
         daviPrint('Data indexing and peak calling:', line=True)
         
-        #Create status window:
-        statWin = statusWindow(len(dataFilePaths))
-        statWin.after(1, fileLoop, 0)
-        statWin.mainloop()
-            
+        #Create status window
+        #----------------------------------------------------------------------
+        fileTime = 0
+        times = []
+        index = 0
+        #Create a progress bar window:
+        window = bar(len(dataFilePaths))
+        window.wm_title("Analysis status")
+        window.after(10, fileLoop, index, fileTime)
+        window.mainloop()
+        #----------------------------------------------------------------------
         
     #Create result files:
     experimentAnalyser(experimentFiles, saveDirectory, experimentName, settings)
