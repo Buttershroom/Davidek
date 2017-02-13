@@ -41,8 +41,12 @@ class compensationObject:
         
         
     def __calculate_composition(self, sequence, charge, IAA):
-        """ Hidden function that calculates the atomic composition of a given 
-            sequence.
+        """ Returns a dictionary of the atomic composition of a given sequence.
+        
+        MOVE THIS TO COMPENSATION TOOLS
+        
+        >>> compensationObject.__calculate_composition('PEPTIDECK', 2, 0)
+        
         """
         #Get composition:
         comp = mass.mass.Composition(sequence=sequence)
@@ -60,6 +64,9 @@ class compensationObject:
         
     def __calculate_labelNeutrons(self, labels):
         """ Calculates the number of extra neutrons in the K vs the R label.
+        
+        MOVE THIS TO COMPENSATION TOOLS AND CHANGE NAME TO MORE INTUITIVE
+        
         """
         self.KC13label = int(labels.split(',')[0].split(':')[1][0])
         self.RC13label = int(labels.split(' ')[1].split(':')[1][0])
@@ -551,7 +558,7 @@ def compensateData(compensationLibrary, indexedData, settings):
                     
             
             
-"""   
+
 if __name__ == '__main__':
-    A = compensateData(peptideSettings, settings, indexedData)
-"""
+    import doctest
+    doctest.testmod()
