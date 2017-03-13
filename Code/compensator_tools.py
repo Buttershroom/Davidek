@@ -6,7 +6,6 @@ Created on Tue Feb 14 13:24:39 2017
 """
 from pyteomics import mass
 from math import floor
-from Printicek import daviPrint
 from copy import deepcopy
 
 def calculate_composition(sequence, charge, IAA, heavy=False, labels=None):
@@ -278,25 +277,25 @@ def calculate_distribution(monoisotopicComposition, relativeIsoforms):
     '''
     return distribution
 
-'''
-def calculate_labelNeutrons(labels):
-    """ Returns the number of extra neutrons in K, vs R label.
-    
-    >>> calculate_labelNeutrons('K:0C2N, R:0C2N')
-    (2, 2)
-    >>> calculate_labelNeutrons('K:8C4N, R:6C2N')
-    (12, 8)
-    """
-    KC13label = int(labels.split(',')[0].split(':')[1][0])
-    RC13label = int(labels.split(' ')[1].split(':')[1][0])
-    KN15label = int(labels.split(',')[0].split(':')[1][2])
-    RN15label = int(labels.split(' ')[1].split(':')[1][2])
-    KlabelNeutrons = KC13label + KN15label
-    RlabelNeutrons = RC13label + RN15label
-    return KlabelNeutrons, RlabelNeutrons
-    
-
-
+def getFragmentInfo(fragment, sequence):
+        """ Returns fragmentNumber, sequence, charge and heavy/light identifyer 
+            based on peptide sequence and fragment identifyer.
+        
+        >>> getFragmentInfo('y6 h2+++', 'PEPTIDECK')
+        (6, 'TIDECK', 3, 'h')
+        >>> getFragmentInfo('y9 l0+', 'PERKTIDECK')
+        (9, 'ERKTIDECK', 1, 'l')
+        """
+        
+        fragmentNumber = int(fragment.split(' ')[0][1:])
+        sequence = sequence.strip('+')[len(sequence.strip('+'))-fragmentNumber:]
+        #Count charge
+        charge = fragment.count('+')
+        #Find identifyer 'h' or 'l':
+        heavyLightIdentifyer = fragment.split(' ')[1][0]
+        
+        return fragmentNumber, sequence, charge, heavyLightIdentifyer
+        
 def calculate_overlappingPeak(fragment, peptideSequence, KlabelNeutrons, RlabelNeutrons, includedPeaks):
     """ Returns which peak the inputted peak overlaps with. 
         Assumes that peaks with the same number of extra neutrons are not 
@@ -330,6 +329,26 @@ def calculate_overlappingPeak(fragment, peptideSequence, KlabelNeutrons, RlabelN
         return overlappingPeak
 
     return None
+
+def calculate_labelNeutrons(labels):
+    """ Returns the number of extra neutrons in K, vs R label.
+    
+    >>> calculate_labelNeutrons('K:0C2N, R:0C2N')
+    (2, 2)
+    >>> calculate_labelNeutrons('K:8C4N, R:6C2N')
+    (12, 8)
+    """
+    KC13label = int(labels.split(',')[0].split(':')[1][0])
+    RC13label = int(labels.split(' ')[1].split(':')[1][0])
+    KN15label = int(labels.split(',')[0].split(':')[1][2])
+    RN15label = int(labels.split(' ')[1].split(':')[1][2])
+    KlabelNeutrons = KC13label + KN15label
+    RlabelNeutrons = RC13label + RN15label
+    return KlabelNeutrons, RlabelNeutrons
+    
+'''
+
+
 
 def calculate_overlappingPrecursorPeak(fragment, sequence, KlabelNeutrons, RlabelNeutrons, includedPeaks, MS1clusterPeaks):
     """ Returns which peak the inputted peak overlaps with. 
@@ -365,24 +384,7 @@ def calculate_overlappingPrecursorPeak(fragment, sequence, KlabelNeutrons, Rlabe
         
     return None
     
-def getFragmentInfo(fragment, sequence):
-        """ Returns fragmentNumber, sequence, charge and heavy/light identifyer 
-            based on peptide sequence and fragment identifyer.
-        
-        >>> getFragmentInfo('y6 h2+++', 'PEPTIDECK')
-        (6, 'TIDECK', 3, 'h')
-        >>> getFragmentInfo('y9 l0+', 'PERKTIDECK')
-        (9, 'ERKTIDECK', 1, 'l')
-        """
-        
-        fragmentNumber = int(fragment.split(' ')[0][1:])
-        sequence = sequence.strip('+')[len(sequence.strip('+'))-fragmentNumber:]
-        #Count charge
-        charge = fragment.count('+')
-        #Find identifyer 'h' or 'l':
-        heavyLightIdentifyer = fragment.split(' ')[1][0]
-        
-        return fragmentNumber, sequence, charge, heavyLightIdentifyer
+
 
 
     
