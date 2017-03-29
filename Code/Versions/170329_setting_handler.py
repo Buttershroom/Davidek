@@ -344,8 +344,7 @@ def standardSettings():
                             ('Max fragment charge', '', 2, int, 'The maximum charge of MS2 ions to search for.', 'callingType'),
                             ('MS1 compensation', '', False, bool, 'Whether or not compensation should be done in MS1.', 'callingType'),
                             ('MS2 compensation', '', False, bool, 'Whether or not compensation should be done in MS2. Will only have effect if Co-isolation is activated.', 'callingType'),
-                            ('Save figures', '', False, bool, 'Whether or not to save figures in analysis.', 'analysisType'),
-                            ('Isolation window offset', 'Da', 0, float, 'The offset of the isolation window center. Is used to link MS2 data to precursors as a ioslation window center offset is added to the isolated precursor mass parameter in MS2 spectra.', 'callingType')
+                            ('Save figures', '', False, bool, 'Whether or not to save figures in analysis.', 'analysisType')
                             ]
         standardSettings = settingsClass('standard settings')
         for s in standardSettingsList:

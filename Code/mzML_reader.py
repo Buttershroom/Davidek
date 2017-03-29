@@ -38,7 +38,7 @@ def callPeaksFromSpectrum(spectrum, settings, peptideSettings):
     #Get spectrum retention time and MS level:
     MSlevel, RT = getSpectrumInfo(spectrum)
     if MSlevel == 'MS2':
-        selectedIonMz = spectrum['selected ion m/z']
+        selectedIonMz = spectrum['selected ion m/z'] - settings['Isolation window offset']
     #Parse through peptide objects:
     for peptide in peptideSettings:
         peptideObject = peptideSettings[peptide]
