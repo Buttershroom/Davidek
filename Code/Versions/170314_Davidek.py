@@ -9,8 +9,7 @@ from setting_handler import settingsGUI
 from mass_calculator import massCalculator
 from mzML_reader import mzMLdataExtractor
 from TICwriter import TICwriter
-from compensator import compensateData
-from compensationLibraryCreator import create_compensationLibrary
+from compensator import compensateData, create_compensationLibrary
 from writer import pickler
 from analyser import experimentAnalyser
 from Printicek import daviPrint
