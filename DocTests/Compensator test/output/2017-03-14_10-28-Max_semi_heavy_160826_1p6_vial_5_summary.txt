@@ -1,0 +1,29 @@
+Peptides included:
+DLQAQVVESAK++
+ISEATDGLSDFLK++
+YGVSDYHK++
+SIELAEAK++
+NLINNAK++
+SQTPAEDTVK++
+YGVSDYYK++
+
+Settings:
+Isolation window offset	0.55
+MS2 quantification	1
+Isolation window size	1.2
+MS2 compensation	0
+Include b-fragments	0
+Max fragment charge	2
+Peaks in isotope clusters	3
+Save figures	1
+Scheduled run	1
+Co-isolation	1
+Co-isolation (analysis)	1
+MS1 quantification	0
+MS1 compensation	0
+MS1 tolerance	10.0
+IAA	1
+Heavy labels	K:0C2N, R:0C2N
+Reduce noise	1
+Fragment peptide calling	0
+MS2 tolerance	7.0
